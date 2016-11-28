@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Composition;
+﻿using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
-using Microsoft.CodeAnalysis.Text;
 
 namespace CQSAnalyzer
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CQSAnalyzerCodeFixProvider)), Shared]
+    // TODO: create code fix provider: add pure attribute to method (if nuget jetbrains.annotations -> jetbrains.pure; else contracts.pure)
+    // TODO: create code fix provider: make return type void
+
+    //[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CQSAnalyzerCodeFixProvider)), Shared]
     public class CQSAnalyzerCodeFixProvider : CodeFixProvider
     {
         private const string title = "Make uppercase";
@@ -44,10 +44,7 @@ namespace CQSAnalyzer
 
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
-                CodeAction.Create(
-                    title: title,
-                    createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
-                    equivalenceKey: title),
+                CodeAction.Create(title, c => MakeUppercaseAsync(context.Document, declaration, c), title),
                 diagnostic);
         }
 
@@ -64,7 +61,8 @@ namespace CQSAnalyzer
             // Produce a new solution that has all references to that type renamed, including the declaration.
             var originalSolution = document.Project.Solution;
             var optionSet = originalSolution.Workspace.Options;
-            var newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, typeSymbol, newName, optionSet, cancellationToken).ConfigureAwait(false);
+            var newSolution =
+                await Renamer.RenameSymbolAsync(document.Project.Solution, typeSymbol, newName, optionSet, cancellationToken).ConfigureAwait(false);
 
             // Return the new solution with the now-uppercase type name.
             return newSolution;
