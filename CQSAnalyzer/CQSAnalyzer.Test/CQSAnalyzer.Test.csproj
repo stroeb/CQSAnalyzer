@@ -106,6 +106,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComplexTest.cs" />
     <Compile Include="InstanceMethodsTests.cs" />
     <Compile Include="GenericsTests.cs" />
     <Compile Include="LambdaTests.cs" />
@@ -125,6 +126,9 @@
       <Project>{48E6398D-2F07-48FF-9581-F82455298C59}</Project>
       <Name>CQSAnalyzer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

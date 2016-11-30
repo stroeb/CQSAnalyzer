@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 
 using Microsoft.CodeAnalysis;
@@ -17,6 +18,12 @@ namespace CQSAnalyzer
             return attributes.Any(a => a.ToString() == SystemDiagnosticsContractsPureAttribute || a.ToString() == JetbrainsAnnotationsPureAttribute);
         }
 
+        public static bool HasIgnoreAttribute(this ISymbol declaredSymbol)
+        {
+            var attributes = declaredSymbol.GetAttributes();
+            return attributes.Any(a => a.ToString() == typeof(SilenceCQSAnalyzerAttribute).FullName);
+        }
+
         public static bool IsVoidReturn(this MethodDeclarationSyntax methodDeclaration)
         {
             var nonGenericReturn = methodDeclaration.ReturnType as PredefinedTypeSyntax;
@@ -33,14 +40,30 @@ namespace CQSAnalyzer
             return !methodDeclaration.ParameterList.Parameters.Any(p => p.Modifiers.All(pm => pm.Kind() != SyntaxKind.ThisKeyword));
         }
 
-        public static bool HasNoParameters(this SimpleLambdaExpressionSyntax methodDeclaration)
+        private static bool HasNoParameters(this SimpleLambdaExpressionSyntax methodDeclaration)
         {
             return methodDeclaration.Parameter == null;
         }
 
-        public static bool HasNoParameters(this ParenthesizedLambdaExpressionSyntax methodDeclaration)
+        private static bool HasNoParameters(this ParenthesizedLambdaExpressionSyntax methodDeclaration)
         {
             return !methodDeclaration.ParameterList.Parameters.Any();
+        }
+
+        public static bool HasNoParameters(this LambdaExpressionSyntax methodDeclaration)
+        {
+            var simpleLambda = methodDeclaration as SimpleLambdaExpressionSyntax;
+            if (simpleLambda != null)
+            {
+                return simpleLambda.HasNoParameters();
+            }
+
+            var parenthesizedLambda = methodDeclaration as ParenthesizedLambdaExpressionSyntax;
+            if (parenthesizedLambda != null)
+            {
+                return parenthesizedLambda.HasNoParameters();
+            }
+            throw new NotSupportedException();
         }
     }
 }

@@ -25,7 +25,7 @@ namespace CQSAnalyzer.Test
             var expected = new DiagnosticResult
             {
                 Id = "CQSAnalyzer",
-                Message = CQSAnalyzerAnalyzer.MessageFormat,
+                Message = "Can't determine if method should be command or query",
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[]
@@ -53,7 +53,7 @@ namespace CQSAnalyzer.Test
             var expected = new DiagnosticResult
             {
                 Id = "CQSAnalyzer",
-                Message = CQSAnalyzerAnalyzer.MessageFormat,
+                Message = "Can't determine if method should be command or query",
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[]

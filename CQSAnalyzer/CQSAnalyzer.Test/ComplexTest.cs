@@ -7,10 +7,10 @@ using TestHelper;
 namespace CQSAnalyzer.Test
 {
     [TestClass]
-    public class GenericsTests : DiagnosticVerifier
+    public class ComplexTest : DiagnosticVerifier
     {
         [TestMethod]
-        public void GenericMethod_IsCommandAndQuery_Violation()
+        public void Method_QueryWithWrite_Violatio123n()
         {
             var test = @"
     using System;
@@ -19,11 +19,56 @@ namespace CQSAnalyzer.Test
     {
         public class Generic 
         {
-            private T field;
-            public T GenericCommandQuery<T>(T para)
+           private int field;
+public int Prop {get;set;}
+            public void QueryWithWrite(int p1, ref int p_ref, out int p_out)
             {
-                field = para;
-                return default(T);
+                var l1 = 0;
+                int l2 = 0;
+
+l1 = 2;
+l2 = 2;
+p1 = 2;
+p_ref = 2;
+p_out = 2;
+field = 2;
+Prop = 2;
+            }
+        }
+    }";
+
+            var expected = new DiagnosticResult
+            {
+                Id = "CQSAnalyzer",
+                Message = CQSAnalyzerAnalyzer.CanTDetermineIfMethodShouldBeCommandOrQuery,
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[]
+                    {
+                        new DiagnosticResultLocation("Test0.cs", 8, 22)
+                    }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+        }
+
+        [TestMethod]
+        public void Method_QueryWithWrite_Violation()
+        {
+            var test = @"
+    using System;
+
+    namespace ConsoleApplication1
+    {
+        public class Generic 
+        {
+           private int a;
+            public int QueryWithWrite()
+            {
+var z = 0;
+                z++;
+a = 6;
+                return z;
             }
         }
     }";
@@ -42,46 +87,6 @@ namespace CQSAnalyzer.Test
 
             VerifyCSharpDiagnostic(test, expected);
         }
-
-        [TestMethod]
-        public void GenericMethod_IsCommand_NoViolation()
-        {
-            var test = @"
-    using System;
-
-    namespace ConsoleApplication1
-    {
-        public class Generic 
-        {
-            private void GenericCommand<T>(T para)
-            {
-            }
-        }
-    }";
-
-            VerifyCSharpDiagnostic(test);
-        }
-
-        [TestMethod]
-        public void GenericMethod_IsQuery_NoViolation()
-        {
-            var test = @"
-    using System;
-
-    namespace ConsoleApplication1
-    {
-        public class Generic 
-        {
-            public T GenericQuery<T>()
-            {
-                return default(T);
-            }
-        }
-    }";
-
-            VerifyCSharpDiagnostic(test);
-        }
-
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {

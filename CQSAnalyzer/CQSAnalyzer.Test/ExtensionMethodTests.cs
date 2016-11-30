@@ -66,8 +66,8 @@ namespace CQSAnalyzer.Test
     }";
             var expected = new DiagnosticResult
             {
-                Id = "CQSAnalyzer",
-                Message = CQSAnalyzerAnalyzer.MessageFormat,
+                Id = CQSAnalyzerAnalyzer.DiagnosticId,
+                Message = "Can't determine if method should be command or query",
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[]
