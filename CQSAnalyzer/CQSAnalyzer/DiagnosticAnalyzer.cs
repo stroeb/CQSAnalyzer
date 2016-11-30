@@ -16,7 +16,7 @@ namespace CQSAnalyzer
 
         private const string Title = "This analyzer checks if your methods are violating Command-Query-Seperation.";
 
-        private const string MessageFormat = "Method is Command AND Query!";
+        internal const string MessageFormat = "Method is Command AND Query!";
 
         private const string Description = "This analyzer checks if your methods are violating Command-Query-Seperation.";
 
